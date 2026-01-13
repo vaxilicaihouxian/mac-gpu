@@ -145,10 +145,10 @@ func (m *GPUMonitor) getGPUUsage() (float64, int) {
 		freqStr := freqMatch[1]
 
 		freqParts := strings.Fields(freqStr)
-		for i := 0; i < len(freqParts); i += 2 {
-			if i+1 < len(freqParts) {
-				freq := strings.TrimSpace(strings.TrimSuffix(freqParts[i], ":"))
-				percentStr := strings.TrimSuffix(freqParts[i+1], "%")
+		for i := 0; i < len(freqParts); i += 3 {
+			if i+2 < len(freqParts) {
+				freq := freqParts[i]
+				percentStr := strings.TrimSuffix(freqParts[i+2], "%")
 				percent := 0.0
 				fmt.Sscanf(percentStr, "%f", &percent)
 				if percent > 0 {
