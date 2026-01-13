@@ -1,4 +1,4 @@
-module mac_gpu
+module github.com/vaxilicaihouxian/-mac-gpu-monitor
 
 go 1.22
 
