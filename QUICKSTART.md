@@ -16,9 +16,6 @@ sudo ./mac_gpu
 # 编译
 ./build.sh
 
-# 演示
-./demo.sh
-
 # 测试
 ./test.sh
 ```
@@ -60,8 +57,7 @@ sudo ./mac_gpu
 - `mac_gpu` - 编译后的可执行文件
 - `build.sh` - 构建脚本
 - `test.sh` - 测试脚本
-- `demo.sh` - 演示脚本
-- `readme.md` - 项目说明
+- `README.md` - 项目说明
 - `USAGE.md` - 详细使用说明
 - `QUICKSTART.md` - 本文件
 
