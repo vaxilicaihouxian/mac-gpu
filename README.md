@@ -159,6 +159,8 @@ Apple Silicon GPU 采用统一架构，不支持分核心查询。原 Python 版
 
 如有问题或建议，欢迎反馈。
 
+code by ai openclaw
+
 ---
 
 **项目已按照"简单优雅、现代易维护"的要求完成！**
