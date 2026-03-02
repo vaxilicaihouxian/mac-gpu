@@ -2,10 +2,12 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
 	"os/user"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -34,6 +36,13 @@ func min(a, b int) int {
 	return b
 }
 
+type GPULogEntry struct {
+	Timestamp   string             `json:"timestamp"`
+	GPUUsage    float64            `json:"gpu_usage_percent"`
+	MemoryUsage int                `json:"memory_usage_mb"`
+	Frequencies map[string]float64 `json:"frequencies"`
+}
+
 type GPUMonitor struct {
 	gpuCores       int
 	maxMemory      int
@@ -51,6 +60,42 @@ func NewGPUMonitor() *GPUMonitor {
 	}
 	monitor.getGPUInfo()
 	return monitor
+}
+
+func (m *GPUMonitor) logGPUUsage(usage float64, memory int) {
+	logDir := "logs"
+	if err := os.MkdirAll(logDir, 0755); err != nil {
+		return
+	}
+
+	now := time.Now()
+	logFileName := filepath.Join(logDir, fmt.Sprintf("gpu_monitor_%s.log", now.Format("2006-01-02")))
+
+	entry := GPULogEntry{
+		Timestamp:   now.Format(time.RFC3339),
+		GPUUsage:    usage,
+		MemoryUsage: memory,
+		Frequencies: make(map[string]float64),
+	}
+
+	for k, v := range m.gpuFrequencies {
+		entry.Frequencies[k] = v
+	}
+
+	jsonData, err := json.Marshal(entry)
+	if err != nil {
+		return
+	}
+
+	file, err := os.OpenFile(logFileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return
+	}
+	defer file.Close()
+
+	if _, err := file.Write(append(jsonData, '\n')); err != nil {
+		return
+	}
 }
 
 func (m *GPUMonitor) getGPUInfo() {
@@ -350,6 +395,7 @@ func (m *GPUMonitor) run() {
 		usage, memory := m.getGPUUsage()
 		m.updateHistory(usage, memory)
 		m.display(usage, memory)
+		m.logGPUUsage(usage, memory)
 	}
 }
 
